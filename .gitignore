@@ -1,0 +1,64 @@
+# Dependencies
+node_modules/
+admin/node_modules/
+server/node_modules/
+.pnpm-store/
+
+# Production build outputs
+dist/
+dist-ssr/
+build/
+admin/dist/
+server/dist/
+*.local
+
+# Environment variables & secret files
+.env
+.env.local
+.env.*.local
+server/.env
+server/.env.local
+server/.env.*.local
+admin/.env
+admin/.env.local
+
+# Server user uploads directory
+server/uploads/*
+!server/uploads/.gitkeep
+
+# Logs & debugging
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# OS generated metadata & cache
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDEs & Editor configurations
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*.swo
+
+# Temporary scratch & cache directories
+scratch/
+.tmp/
+.temp/
+.cache/
+.eslintcache
