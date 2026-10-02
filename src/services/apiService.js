@@ -6,7 +6,7 @@
 
 // Toggle between Static Mock Data and live Node.js REST API
 export const USE_MOCK_DATA = false;
-export const API_BASE_URL = 'http://localhost:5001/api';
+export const API_BASE_URL = 'https://bbsc-api.onrender.com/api';
 
 // Static Data Store matching exact UI specifications & backend JSON schemas
 const MOCK_DATA = {
