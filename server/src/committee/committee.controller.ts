@@ -12,6 +12,7 @@ import { CreateCommitteeDto } from './dto/create-committee.dto';
 import { UpdateCommitteeDto } from './dto/update-committee.dto';
 import { Public } from '../auth/public.decorator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 const multerConfig = {
   storage: diskStorage({
@@ -41,7 +42,10 @@ const multerConfig = {
 @UseGuards(JwtAuthGuard)
 @Controller('committee')
 export class CommitteeController {
-  constructor(private readonly committeeService: CommitteeService) {}
+  constructor(
+    private readonly committeeService: CommitteeService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   @Public()
   @ApiOperation({ summary: 'Get all committee members (Public endpoint - No Auth Guard)' })
@@ -68,12 +72,12 @@ export class CommitteeController {
     if (!file) {
       throw new BadRequestException('Please select a committee member photo file to upload.');
     }
-    const fileUrl = `/uploads/committee/${file.filename}`;
+    const fileUrl = await this.cloudinaryService.uploadFile(file, 'committee');
     return {
       success: true,
       message: 'Committee member photo uploaded successfully.',
       url: fileUrl,
-      filename: file.filename,
+      filename: file.filename || file.originalname,
     };
   }
 
@@ -85,7 +89,7 @@ export class CommitteeController {
     let photoPath = dto.photo || dto.image;
 
     if (file) {
-      photoPath = `/uploads/committee/${file.filename}`;
+      photoPath = await this.cloudinaryService.uploadFile(file, 'committee');
     }
 
     const data = await this.committeeService.create({
@@ -103,7 +107,7 @@ export class CommitteeController {
     let photoPath = dto.photo || dto.image;
 
     if (file) {
-      photoPath = `/uploads/committee/${file.filename}`;
+      photoPath = await this.cloudinaryService.uploadFile(file, 'committee');
     }
 
     const data = await this.committeeService.update(id, {

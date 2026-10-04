@@ -7,6 +7,7 @@ import { CompetitionsService } from './competitions.service';
 import { CreateCompetitionDto } from './dto/create-competition.dto';
 import { Public } from '../auth/public.decorator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 const multerConfig = {
   storage: diskStorage({
@@ -35,7 +36,10 @@ const multerConfig = {
 @UseGuards(JwtAuthGuard)
 @Controller('competitions')
 export class CompetitionsController {
-  constructor(private readonly competitionsService: CompetitionsService) {}
+  constructor(
+    private readonly competitionsService: CompetitionsService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   @Public()
   @Get()
@@ -57,12 +61,12 @@ export class CompetitionsController {
     if (!file) {
       throw new BadRequestException('Please select an icon image file to upload.');
     }
-    const fileUrl = `/uploads/competitions/${file.filename}`;
+    const fileUrl = await this.cloudinaryService.uploadFile(file, 'competitions');
     return {
       success: true,
       message: 'Icon image file uploaded successfully.',
       url: fileUrl,
-      filename: file.filename,
+      filename: file.filename || file.originalname,
     };
   }
 
@@ -72,7 +76,7 @@ export class CompetitionsController {
     let iconPath = dto.icon;
 
     if (file) {
-      iconPath = `/uploads/competitions/${file.filename}`;
+      iconPath = await this.cloudinaryService.uploadFile(file, 'competitions');
     }
 
     if (!iconPath) {
@@ -92,7 +96,7 @@ export class CompetitionsController {
     let iconPath = dto.icon;
 
     if (file) {
-      iconPath = `/uploads/competitions/${file.filename}`;
+      iconPath = await this.cloudinaryService.uploadFile(file, 'competitions');
     }
 
     const data = await this.competitionsService.update(id, {

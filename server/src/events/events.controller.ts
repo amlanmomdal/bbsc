@@ -8,6 +8,7 @@ import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { Public } from '../auth/public.decorator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 const multerConfig = {
   storage: diskStorage({
@@ -36,7 +37,10 @@ const multerConfig = {
 @UseGuards(JwtAuthGuard)
 @Controller('events')
 export class EventsController {
-  constructor(private readonly eventsService: EventsService) {}
+  constructor(
+    private readonly eventsService: EventsService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   @Public()
   @Get()
@@ -58,12 +62,12 @@ export class EventsController {
     if (!file) {
       throw new BadRequestException('Please select an event image file to upload.');
     }
-    const fileUrl = `/uploads/events/${file.filename}`;
+    const fileUrl = await this.cloudinaryService.uploadFile(file, 'events');
     return {
       success: true,
       message: 'Event image file uploaded successfully.',
       url: fileUrl,
-      filename: file.filename,
+      filename: file.filename || file.originalname,
     };
   }
 
@@ -73,7 +77,7 @@ export class EventsController {
     let imagePath = dto.image;
 
     if (file) {
-      imagePath = `/uploads/events/${file.filename}`;
+      imagePath = await this.cloudinaryService.uploadFile(file, 'events');
     }
 
     const data = await this.eventsService.create({
@@ -89,7 +93,7 @@ export class EventsController {
     let imagePath = dto.image;
 
     if (file) {
-      imagePath = `/uploads/events/${file.filename}`;
+      imagePath = await this.cloudinaryService.uploadFile(file, 'events');
     }
 
     const data = await this.eventsService.update(id, {

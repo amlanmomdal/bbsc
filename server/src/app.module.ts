@@ -10,6 +10,7 @@ import { GalleryModule } from './gallery/gallery.module';
 import { CommitteeModule } from './committee/committee.module';
 import { DocsModule } from './docs/docs.module';
 import { DatabaseModule } from './database/database.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://bbsc_admin:66jsAHzD9SR9lTic@cluster0.dnei5li.mongodb.net/bbsc?retryWrites=true&w=majority';
@@ -20,6 +21,7 @@ const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://bbsc_admin:66jsAHzD9S
       dbName: 'bbsc',
     }),
     DatabaseModule,
+    CloudinaryModule,
     AuthModule,
     CompetitionsModule,
     EventsModule,

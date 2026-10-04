@@ -4,11 +4,13 @@ import { CommitteeController } from './committee.controller';
 import { CommitteeService } from './committee.service';
 import { Committee, CommitteeSchema } from '../schemas/committee.schema';
 import { AuthModule } from '../auth/auth.module';
+import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Committee.name, schema: CommitteeSchema }]),
     AuthModule,
+    CloudinaryModule,
   ],
   controllers: [CommitteeController],
   providers: [CommitteeService],

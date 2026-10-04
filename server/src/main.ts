@@ -1,9 +1,13 @@
-declare const process: any;
+import * as dotenv from 'dotenv';
+import { join } from 'path';
+
+// Load environment variables from .env
+dotenv.config({ path: join(__dirname, '..', '.env') });
+dotenv.config({ path: join(__dirname, '..', '..', '.env') });
 
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
-import { join } from 'path';
 import * as express from 'express';
 import * as fs from 'fs';
 

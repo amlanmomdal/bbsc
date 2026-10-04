@@ -4,6 +4,7 @@ import { CompetitionsController } from './competitions.controller';
 import { CompetitionsService } from './competitions.service';
 import { Competition, CompetitionSchema } from '../schemas/competition.schema';
 import { AuthModule } from '../auth/auth.module';
+import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { AuthModule } from '../auth/auth.module';
       { name: Competition.name, schema: CompetitionSchema },
     ]),
     AuthModule,
+    CloudinaryModule,
   ],
   controllers: [CompetitionsController],
   providers: [CompetitionsService],

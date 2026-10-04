@@ -11,6 +11,7 @@ import { CreateGalleryDto } from './dto/create-gallery.dto';
 import { UpdateGalleryDto } from './dto/update-gallery.dto';
 import { Public } from '../auth/public.decorator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 const multerConfig = {
   storage: diskStorage({
@@ -39,7 +40,10 @@ const multerConfig = {
 @UseGuards(JwtAuthGuard)
 @Controller('gallery')
 export class GalleryController {
-  constructor(private readonly galleryService: GalleryService) {}
+  constructor(
+    private readonly galleryService: GalleryService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   @Public()
   @Get()
@@ -62,12 +66,12 @@ export class GalleryController {
     if (!file) {
       throw new BadRequestException('Please select a gallery image file to upload.');
     }
-    const fileUrl = `/uploads/gallery/${file.filename}`;
+    const fileUrl = await this.cloudinaryService.uploadFile(file, 'gallery');
     return {
       success: true,
       message: 'Gallery image file uploaded successfully.',
       url: fileUrl,
-      filename: file.filename,
+      filename: file.filename || file.originalname,
     };
   }
 
@@ -77,7 +81,7 @@ export class GalleryController {
     let imagePath = dto.image;
 
     if (file) {
-      imagePath = `/uploads/gallery/${file.filename}`;
+      imagePath = await this.cloudinaryService.uploadFile(file, 'gallery');
     }
 
     const data = await this.galleryService.create({
@@ -93,7 +97,7 @@ export class GalleryController {
     let imagePath = dto.image;
 
     if (file) {
-      imagePath = `/uploads/gallery/${file.filename}`;
+      imagePath = await this.cloudinaryService.uploadFile(file, 'gallery');
     }
 
     const data = await this.galleryService.update(id, {
