@@ -16,7 +16,10 @@ export const resolveImageUrl = (imagePath, fallback = '/images/kali_puja.jpg') =
 
   // If it's an uploaded file from NestJS backend server
   if (path.startsWith('/uploads/')) {
-    return `http://34.230.0.252:5001${path}`;
+    const host = (typeof window !== 'undefined' && window.location.protocol === 'https:')
+      ? 'https://bbsc-api.onrender.com'
+      : 'http://34.230.0.252:5001';
+    return `${host}${path}`;
   }
 
   return path;

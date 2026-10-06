@@ -5,7 +5,14 @@
  * Supports persistent local state via localStorage.
  */
 
-export const API_BASE_URL = 'http://34.230.0.252:5001/api';
+export const getApiBaseUrl = () => {
+  if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
+    return 'https://bbsc-api.onrender.com/api';
+  }
+  return 'http://34.230.0.252:5001/api';
+};
+
+export const API_BASE_URL = getApiBaseUrl();
 
 const STORAGE_KEYS = {
   AUTH: 'bbsc_admin_auth',
