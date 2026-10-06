@@ -8,9 +8,6 @@
 export const USE_MOCK_DATA = false;
 
 export const getApiBaseUrl = () => {
-  if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
-    return 'https://bbsc-api.onrender.com/api';
-  }
   return 'http://34.230.0.252:5001/api';
 };
 
