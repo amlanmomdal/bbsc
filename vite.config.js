@@ -11,7 +11,7 @@ export default defineConfig({
     allowedHosts: ['.ngrok-free.app', '.ngrok.io'],
     proxy: {
       '/uploads': {
-        target: 'http://localhost:5001',
+        target: 'http://34.230.0.252:5001',
         changeOrigin: true,
       }
     }

@@ -5,7 +5,7 @@
  * Supports persistent local state via localStorage.
  */
 
-export const API_BASE_URL = 'https://bbsc-api.onrender.com/api';
+export const API_BASE_URL = 'http://34.230.0.252:5001/api';
 
 const STORAGE_KEYS = {
   AUTH: 'bbsc_admin_auth',
@@ -258,7 +258,7 @@ export const adminApiService = {
 
   sendOtp: async (email) => {
     try {
-      const res = await fetch('https://bbsc-api.onrender.com/api/auth/send-otp', {
+      const res = await fetch('http://34.230.0.252:5001/api/auth/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
@@ -281,7 +281,7 @@ export const adminApiService = {
 
   verifyOtp: async (email, otp) => {
     try {
-      const res = await fetch('https://bbsc-api.onrender.com/api/auth/verify-otp', {
+      const res = await fetch('http://34.230.0.252:5001/api/auth/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp })
@@ -327,7 +327,7 @@ export const adminApiService = {
   getEvents: () => getStorageItem(STORAGE_KEYS.EVENTS, INITIAL_EVENTS),
   fetchEventsFromApi: async () => {
     try {
-      const res = await fetch('https://bbsc-api.onrender.com/api/events');
+      const res = await fetch('http://34.230.0.252:5001/api/events');
       if (res.ok) {
         const json = await res.json();
         const items = Array.isArray(json) ? json : (json.data || []);
@@ -358,7 +358,7 @@ export const adminApiService = {
 
   fetchEventByIdFromApi: async (id) => {
     try {
-      const res = await fetch(`https://bbsc-api.onrender.com/api/events/${id}`);
+      const res = await fetch(`http://34.230.0.252:5001/api/events/${id}`);
       if (res.ok) {
         const json = await res.json();
         return json.data;
@@ -389,13 +389,13 @@ export const adminApiService = {
         formData.append('image', eventData.imageFile);
 
         if (targetId) {
-          res = await fetch(`https://bbsc-api.onrender.com/api/events/${targetId}`, {
+          res = await fetch(`http://34.230.0.252:5001/api/events/${targetId}`, {
             method: 'PUT',
             headers: authHeaders,
             body: formData
           });
         } else {
-          res = await fetch('https://bbsc-api.onrender.com/api/events', {
+          res = await fetch('http://34.230.0.252:5001/api/events', {
             method: 'POST',
             headers: authHeaders,
             body: formData
@@ -406,13 +406,13 @@ export const adminApiService = {
         const payload = JSON.stringify(eventData);
 
         if (targetId) {
-          res = await fetch(`https://bbsc-api.onrender.com/api/events/${targetId}`, {
+          res = await fetch(`http://34.230.0.252:5001/api/events/${targetId}`, {
             method: 'PUT',
             headers: jsonHeaders,
             body: payload
           });
         } else {
-          res = await fetch('https://bbsc-api.onrender.com/api/events', {
+          res = await fetch('http://34.230.0.252:5001/api/events', {
             method: 'POST',
             headers: jsonHeaders,
             body: payload
@@ -463,7 +463,7 @@ export const adminApiService = {
     try {
       if (id) {
         const headers = await getAuthHeaders();
-        const res = await fetch(`https://bbsc-api.onrender.com/api/events/${id}`, {
+        const res = await fetch(`http://34.230.0.252:5001/api/events/${id}`, {
           method: 'DELETE',
           headers
         });
@@ -493,7 +493,7 @@ export const adminApiService = {
       const formData = new FormData();
       formData.append('file', file);
 
-      const res = await fetch('https://bbsc-api.onrender.com/api/events/upload', {
+      const res = await fetch('http://34.230.0.252:5001/api/events/upload', {
         method: 'POST',
         headers: {
           ...(token ? { 'Authorization': `Bearer ${token}` } : {})
@@ -534,8 +534,8 @@ export const adminApiService = {
   fetchGalleryFromApi: async (categoryTag = '') => {
     try {
       const url = categoryTag && categoryTag !== 'All' 
-        ? `https://bbsc-api.onrender.com/api/gallery?category=${encodeURIComponent(categoryTag)}`
-        : 'https://bbsc-api.onrender.com/api/gallery';
+        ? `http://34.230.0.252:5001/api/gallery?category=${encodeURIComponent(categoryTag)}`
+        : 'http://34.230.0.252:5001/api/gallery';
       const res = await fetch(url);
       if (res.ok) {
         const json = await res.json();
@@ -563,7 +563,7 @@ export const adminApiService = {
       const formData = new FormData();
       formData.append('file', file);
 
-      const res = await fetch('https://bbsc-api.onrender.com/api/gallery/upload', {
+      const res = await fetch('http://34.230.0.252:5001/api/gallery/upload', {
         method: 'POST',
         headers: {
           ...(token ? { 'Authorization': `Bearer ${token}` } : {})
@@ -593,13 +593,13 @@ export const adminApiService = {
         formData.append('image', itemData.imageFile);
 
         if (targetId) {
-          res = await fetch(`https://bbsc-api.onrender.com/api/gallery/${targetId}`, {
+          res = await fetch(`http://34.230.0.252:5001/api/gallery/${targetId}`, {
             method: 'PUT',
             headers: authHeaders,
             body: formData
           });
         } else {
-          res = await fetch('https://bbsc-api.onrender.com/api/gallery', {
+          res = await fetch('http://34.230.0.252:5001/api/gallery', {
             method: 'POST',
             headers: authHeaders,
             body: formData
@@ -616,13 +616,13 @@ export const adminApiService = {
         });
 
         if (targetId) {
-          res = await fetch(`https://bbsc-api.onrender.com/api/gallery/${targetId}`, {
+          res = await fetch(`http://34.230.0.252:5001/api/gallery/${targetId}`, {
             method: 'PUT',
             headers: jsonHeaders,
             body: payload
           });
         } else {
-          res = await fetch('https://bbsc-api.onrender.com/api/gallery', {
+          res = await fetch('http://34.230.0.252:5001/api/gallery', {
             method: 'POST',
             headers: jsonHeaders,
             body: payload
@@ -674,7 +674,7 @@ export const adminApiService = {
     try {
       if (id) {
         const headers = await getAuthHeaders();
-        const res = await fetch(`https://bbsc-api.onrender.com/api/gallery/${id}`, {
+        const res = await fetch(`http://34.230.0.252:5001/api/gallery/${id}`, {
           method: 'DELETE',
           headers
         });
@@ -704,7 +704,7 @@ export const adminApiService = {
 
   fetchCommitteeFromApi: async () => {
     try {
-      const res = await fetch('https://bbsc-api.onrender.com/api/committee');
+      const res = await fetch('http://34.230.0.252:5001/api/committee');
       if (res.ok) {
         const json = await res.json();
         const items = (json.data || []).map(m => ({
@@ -732,7 +732,7 @@ export const adminApiService = {
       const formData = new FormData();
       formData.append('file', file);
 
-      const res = await fetch('https://bbsc-api.onrender.com/api/committee/upload', {
+      const res = await fetch('http://34.230.0.252:5001/api/committee/upload', {
         method: 'POST',
         headers: {
           ...(token ? { 'Authorization': `Bearer ${token}` } : {})
@@ -762,13 +762,13 @@ export const adminApiService = {
         formData.append('photo', fileToUpload);
 
         if (targetId) {
-          res = await fetch(`https://bbsc-api.onrender.com/api/committee/${targetId}`, {
+          res = await fetch(`http://34.230.0.252:5001/api/committee/${targetId}`, {
             method: 'PUT',
             headers: authHeaders,
             body: formData
           });
         } else {
-          res = await fetch('https://bbsc-api.onrender.com/api/committee', {
+          res = await fetch('http://34.230.0.252:5001/api/committee', {
             method: 'POST',
             headers: authHeaders,
             body: formData
@@ -784,13 +784,13 @@ export const adminApiService = {
         });
 
         if (targetId) {
-          res = await fetch(`https://bbsc-api.onrender.com/api/committee/${targetId}`, {
+          res = await fetch(`http://34.230.0.252:5001/api/committee/${targetId}`, {
             method: 'PUT',
             headers: jsonHeaders,
             body: payload
           });
         } else {
-          res = await fetch('https://bbsc-api.onrender.com/api/committee', {
+          res = await fetch('http://34.230.0.252:5001/api/committee', {
             method: 'POST',
             headers: jsonHeaders,
             body: payload
@@ -847,7 +847,7 @@ export const adminApiService = {
     try {
       if (id) {
         const headers = await getAuthHeaders();
-        const res = await fetch(`https://bbsc-api.onrender.com/api/committee/${id}`, {
+        const res = await fetch(`http://34.230.0.252:5001/api/committee/${id}`, {
           method: 'DELETE',
           headers
         });
@@ -918,7 +918,7 @@ export const adminApiService = {
   getCompetitions: () => getStorageItem(STORAGE_KEYS.COMPETITIONS, []),
   fetchCompetitionsFromApi: async () => {
     try {
-      const res = await fetch('https://bbsc-api.onrender.com/api/competitions');
+      const res = await fetch('http://34.230.0.252:5001/api/competitions');
       if (res.ok) {
         const json = await res.json();
         const items = Array.isArray(json) ? json : (json.data || []);
@@ -949,13 +949,13 @@ export const adminApiService = {
         formData.append('icon', imageFile);
 
         if (targetId) {
-          res = await fetch(`https://bbsc-api.onrender.com/api/competitions/${targetId}`, {
+          res = await fetch(`http://34.230.0.252:5001/api/competitions/${targetId}`, {
             method: 'PUT',
             headers: authHeaders,
             body: formData
           });
         } else {
-          res = await fetch('https://bbsc-api.onrender.com/api/competitions', {
+          res = await fetch('http://34.230.0.252:5001/api/competitions', {
             method: 'POST',
             headers: authHeaders,
             body: formData
@@ -966,13 +966,13 @@ export const adminApiService = {
         const payload = JSON.stringify({ title, icon: icon || 'Palette' });
 
         if (targetId) {
-          res = await fetch(`https://bbsc-api.onrender.com/api/competitions/${targetId}`, {
+          res = await fetch(`http://34.230.0.252:5001/api/competitions/${targetId}`, {
             method: 'PUT',
             headers: jsonHeaders,
             body: payload
           });
         } else {
-          res = await fetch('https://bbsc-api.onrender.com/api/competitions', {
+          res = await fetch('http://34.230.0.252:5001/api/competitions', {
             method: 'POST',
             headers: jsonHeaders,
             body: payload
@@ -1021,7 +1021,7 @@ export const adminApiService = {
     try {
       if (id) {
         const headers = await getAuthHeaders();
-        const res = await fetch(`https://bbsc-api.onrender.com/api/competitions/${id}`, {
+        const res = await fetch(`http://34.230.0.252:5001/api/competitions/${id}`, {
           method: 'DELETE',
           headers
         });
@@ -1047,7 +1047,7 @@ export const adminApiService = {
       const formData = new FormData();
       formData.append('file', file);
 
-      const res = await fetch('https://bbsc-api.onrender.com/api/competitions/upload', {
+      const res = await fetch('http://34.230.0.252:5001/api/competitions/upload', {
         method: 'POST',
         headers: {
           ...(token ? { 'Authorization': `Bearer ${token}` } : {})
