@@ -265,7 +265,7 @@ export const adminApiService = {
 
   sendOtp: async (email) => {
     try {
-      const res = await fetch('http://34.230.0.252:5001/api/auth/send-otp', {
+      const res = await fetch(`${getApiBaseUrl()}/auth/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
@@ -288,7 +288,7 @@ export const adminApiService = {
 
   verifyOtp: async (email, otp) => {
     try {
-      const res = await fetch('http://34.230.0.252:5001/api/auth/verify-otp', {
+      const res = await fetch(`${getApiBaseUrl()}/auth/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp })
@@ -334,7 +334,7 @@ export const adminApiService = {
   getEvents: () => getStorageItem(STORAGE_KEYS.EVENTS, INITIAL_EVENTS),
   fetchEventsFromApi: async () => {
     try {
-      const res = await fetch('http://34.230.0.252:5001/api/events');
+      const res = await fetch(`${getApiBaseUrl()}/events`);
       if (res.ok) {
         const json = await res.json();
         const items = Array.isArray(json) ? json : (json.data || []);
@@ -365,7 +365,7 @@ export const adminApiService = {
 
   fetchEventByIdFromApi: async (id) => {
     try {
-      const res = await fetch(`http://34.230.0.252:5001/api/events/${id}`);
+      const res = await fetch(`${getApiBaseUrl()}/events/${id}`);
       if (res.ok) {
         const json = await res.json();
         return json.data;
@@ -396,13 +396,13 @@ export const adminApiService = {
         formData.append('image', eventData.imageFile);
 
         if (targetId) {
-          res = await fetch(`http://34.230.0.252:5001/api/events/${targetId}`, {
+          res = await fetch(`${getApiBaseUrl()}/events/${targetId}`, {
             method: 'PUT',
             headers: authHeaders,
             body: formData
           });
         } else {
-          res = await fetch('http://34.230.0.252:5001/api/events', {
+          res = await fetch(`${getApiBaseUrl()}/events`, {
             method: 'POST',
             headers: authHeaders,
             body: formData
@@ -413,13 +413,13 @@ export const adminApiService = {
         const payload = JSON.stringify(eventData);
 
         if (targetId) {
-          res = await fetch(`http://34.230.0.252:5001/api/events/${targetId}`, {
+          res = await fetch(`${getApiBaseUrl()}/events/${targetId}`, {
             method: 'PUT',
             headers: jsonHeaders,
             body: payload
           });
         } else {
-          res = await fetch('http://34.230.0.252:5001/api/events', {
+          res = await fetch(`${getApiBaseUrl()}/events`, {
             method: 'POST',
             headers: jsonHeaders,
             body: payload
@@ -470,7 +470,7 @@ export const adminApiService = {
     try {
       if (id) {
         const headers = await getAuthHeaders();
-        const res = await fetch(`http://34.230.0.252:5001/api/events/${id}`, {
+        const res = await fetch(`${getApiBaseUrl()}/events/${id}`, {
           method: 'DELETE',
           headers
         });
@@ -500,7 +500,7 @@ export const adminApiService = {
       const formData = new FormData();
       formData.append('file', file);
 
-      const res = await fetch('http://34.230.0.252:5001/api/events/upload', {
+      const res = await fetch(`${getApiBaseUrl()}/events/upload`, {
         method: 'POST',
         headers: {
           ...(token ? { 'Authorization': `Bearer ${token}` } : {})
@@ -541,8 +541,8 @@ export const adminApiService = {
   fetchGalleryFromApi: async (categoryTag = '') => {
     try {
       const url = categoryTag && categoryTag !== 'All' 
-        ? `http://34.230.0.252:5001/api/gallery?category=${encodeURIComponent(categoryTag)}`
-        : 'http://34.230.0.252:5001/api/gallery';
+        ? `${getApiBaseUrl()}/gallery?category=${encodeURIComponent(categoryTag)}`
+        : `${getApiBaseUrl()}/gallery`;
       const res = await fetch(url);
       if (res.ok) {
         const json = await res.json();
@@ -570,7 +570,7 @@ export const adminApiService = {
       const formData = new FormData();
       formData.append('file', file);
 
-      const res = await fetch('http://34.230.0.252:5001/api/gallery/upload', {
+      const res = await fetch(`${getApiBaseUrl()}/gallery/upload`, {
         method: 'POST',
         headers: {
           ...(token ? { 'Authorization': `Bearer ${token}` } : {})
@@ -600,13 +600,13 @@ export const adminApiService = {
         formData.append('image', itemData.imageFile);
 
         if (targetId) {
-          res = await fetch(`http://34.230.0.252:5001/api/gallery/${targetId}`, {
+          res = await fetch(`${getApiBaseUrl()}/gallery/${targetId}`, {
             method: 'PUT',
             headers: authHeaders,
             body: formData
           });
         } else {
-          res = await fetch('http://34.230.0.252:5001/api/gallery', {
+          res = await fetch(`${getApiBaseUrl()}/gallery`, {
             method: 'POST',
             headers: authHeaders,
             body: formData
@@ -623,13 +623,13 @@ export const adminApiService = {
         });
 
         if (targetId) {
-          res = await fetch(`http://34.230.0.252:5001/api/gallery/${targetId}`, {
+          res = await fetch(`${getApiBaseUrl()}/gallery/${targetId}`, {
             method: 'PUT',
             headers: jsonHeaders,
             body: payload
           });
         } else {
-          res = await fetch('http://34.230.0.252:5001/api/gallery', {
+          res = await fetch(`${getApiBaseUrl()}/gallery`, {
             method: 'POST',
             headers: jsonHeaders,
             body: payload
@@ -681,7 +681,7 @@ export const adminApiService = {
     try {
       if (id) {
         const headers = await getAuthHeaders();
-        const res = await fetch(`http://34.230.0.252:5001/api/gallery/${id}`, {
+        const res = await fetch(`${getApiBaseUrl()}/gallery/${id}`, {
           method: 'DELETE',
           headers
         });
@@ -711,7 +711,7 @@ export const adminApiService = {
 
   fetchCommitteeFromApi: async () => {
     try {
-      const res = await fetch('http://34.230.0.252:5001/api/committee');
+      const res = await fetch(`${getApiBaseUrl()}/committee`);
       if (res.ok) {
         const json = await res.json();
         const items = (json.data || []).map(m => ({
@@ -739,7 +739,7 @@ export const adminApiService = {
       const formData = new FormData();
       formData.append('file', file);
 
-      const res = await fetch('http://34.230.0.252:5001/api/committee/upload', {
+      const res = await fetch(`${getApiBaseUrl()}/committee/upload`, {
         method: 'POST',
         headers: {
           ...(token ? { 'Authorization': `Bearer ${token}` } : {})
@@ -769,13 +769,13 @@ export const adminApiService = {
         formData.append('photo', fileToUpload);
 
         if (targetId) {
-          res = await fetch(`http://34.230.0.252:5001/api/committee/${targetId}`, {
+          res = await fetch(`${getApiBaseUrl()}/committee/${targetId}`, {
             method: 'PUT',
             headers: authHeaders,
             body: formData
           });
         } else {
-          res = await fetch('http://34.230.0.252:5001/api/committee', {
+          res = await fetch(`${getApiBaseUrl()}/committee`, {
             method: 'POST',
             headers: authHeaders,
             body: formData
@@ -791,13 +791,13 @@ export const adminApiService = {
         });
 
         if (targetId) {
-          res = await fetch(`http://34.230.0.252:5001/api/committee/${targetId}`, {
+          res = await fetch(`${getApiBaseUrl()}/committee/${targetId}`, {
             method: 'PUT',
             headers: jsonHeaders,
             body: payload
           });
         } else {
-          res = await fetch('http://34.230.0.252:5001/api/committee', {
+          res = await fetch(`${getApiBaseUrl()}/committee`, {
             method: 'POST',
             headers: jsonHeaders,
             body: payload
@@ -854,7 +854,7 @@ export const adminApiService = {
     try {
       if (id) {
         const headers = await getAuthHeaders();
-        const res = await fetch(`http://34.230.0.252:5001/api/committee/${id}`, {
+        const res = await fetch(`${getApiBaseUrl()}/committee/${id}`, {
           method: 'DELETE',
           headers
         });
@@ -925,7 +925,7 @@ export const adminApiService = {
   getCompetitions: () => getStorageItem(STORAGE_KEYS.COMPETITIONS, []),
   fetchCompetitionsFromApi: async () => {
     try {
-      const res = await fetch('http://34.230.0.252:5001/api/competitions');
+      const res = await fetch(`${getApiBaseUrl()}/competitions`);
       if (res.ok) {
         const json = await res.json();
         const items = Array.isArray(json) ? json : (json.data || []);
@@ -956,13 +956,13 @@ export const adminApiService = {
         formData.append('icon', imageFile);
 
         if (targetId) {
-          res = await fetch(`http://34.230.0.252:5001/api/competitions/${targetId}`, {
+          res = await fetch(`${getApiBaseUrl()}/competitions/${targetId}`, {
             method: 'PUT',
             headers: authHeaders,
             body: formData
           });
         } else {
-          res = await fetch('http://34.230.0.252:5001/api/competitions', {
+          res = await fetch(`${getApiBaseUrl()}/competitions`, {
             method: 'POST',
             headers: authHeaders,
             body: formData
@@ -973,13 +973,13 @@ export const adminApiService = {
         const payload = JSON.stringify({ title, icon: icon || 'Palette' });
 
         if (targetId) {
-          res = await fetch(`http://34.230.0.252:5001/api/competitions/${targetId}`, {
+          res = await fetch(`${getApiBaseUrl()}/competitions/${targetId}`, {
             method: 'PUT',
             headers: jsonHeaders,
             body: payload
           });
         } else {
-          res = await fetch('http://34.230.0.252:5001/api/competitions', {
+          res = await fetch(`${getApiBaseUrl()}/competitions`, {
             method: 'POST',
             headers: jsonHeaders,
             body: payload
@@ -1028,7 +1028,7 @@ export const adminApiService = {
     try {
       if (id) {
         const headers = await getAuthHeaders();
-        const res = await fetch(`http://34.230.0.252:5001/api/competitions/${id}`, {
+        const res = await fetch(`${getApiBaseUrl()}/competitions/${id}`, {
           method: 'DELETE',
           headers
         });
@@ -1054,7 +1054,7 @@ export const adminApiService = {
       const formData = new FormData();
       formData.append('file', file);
 
-      const res = await fetch('http://34.230.0.252:5001/api/competitions/upload', {
+      const res = await fetch(`${getApiBaseUrl()}/competitions/upload`, {
         method: 'POST',
         headers: {
           ...(token ? { 'Authorization': `Bearer ${token}` } : {})

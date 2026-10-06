@@ -338,14 +338,14 @@ const MOCK_DATA = {
 export const apiService = {
   getClubStats: async () => {
     if (USE_MOCK_DATA) return Promise.resolve({ success: true, data: MOCK_DATA.clubStats });
-    const res = await fetch(`${API_BASE_URL}/stats`);
+    const res = await fetch(`${getApiBaseUrl()}/stats`);
     return res.json();
   },
 
   getFestivals: async () => {
     if (USE_MOCK_DATA) return Promise.resolve({ success: true, data: MOCK_DATA.festivals });
     try {
-      const res = await fetch(`${API_BASE_URL}/events`);
+      const res = await fetch(`${getApiBaseUrl()}/events`);
       if (res.ok) {
         const json = await res.json();
         const rawItems = json.data || (Array.isArray(json) ? json : []);
@@ -376,7 +376,7 @@ export const apiService = {
   getCompetitions: async () => {
     if (USE_MOCK_DATA) return Promise.resolve({ success: true, data: MOCK_DATA.competitions });
     try {
-      const res = await fetch(`${API_BASE_URL}/competitions`);
+      const res = await fetch(`${getApiBaseUrl()}/competitions`);
       if (res.ok) {
         const json = await res.json();
         const rawItems = json.data || (Array.isArray(json) ? json : []);
@@ -406,8 +406,8 @@ export const apiService = {
     }
     try {
       const url = status && status !== 'all' 
-        ? `${API_BASE_URL}/events?status=${encodeURIComponent(status)}`
-        : `${API_BASE_URL}/events`;
+        ? `${getApiBaseUrl()}/events?status=${encodeURIComponent(status)}`
+        : `${getApiBaseUrl()}/events`;
       const res = await fetch(url);
       if (res.ok) {
         const json = await res.json();
@@ -446,8 +446,8 @@ export const apiService = {
     }
     try {
       const url = category && category !== 'All'
-        ? `${API_BASE_URL}/gallery?category=${encodeURIComponent(category)}`
-        : `${API_BASE_URL}/gallery`;
+        ? `${getApiBaseUrl()}/gallery?category=${encodeURIComponent(category)}`
+        : `${getApiBaseUrl()}/gallery`;
       const res = await fetch(url);
       if (res.ok) {
         const json = await res.json();
@@ -472,7 +472,7 @@ export const apiService = {
 
   getCommittee: async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/committee`);
+      const res = await fetch(`${getApiBaseUrl()}/committee`);
       if (res.ok) {
         const json = await res.json();
         const items = (json.data || []).map(m => ({
@@ -494,7 +494,7 @@ export const apiService = {
 
   getContactInfo: async () => {
     if (USE_MOCK_DATA) return Promise.resolve({ success: true, data: MOCK_DATA.contactInfo });
-    const res = await fetch(`${API_BASE_URL}/contact-info`);
+    const res = await fetch(`${getApiBaseUrl()}/contact-info`);
     return res.json();
   },
 
@@ -507,7 +507,7 @@ export const apiService = {
         }, 600);
       });
     }
-    const res = await fetch(`${API_BASE_URL}/contact`, {
+    const res = await fetch(`${getApiBaseUrl()}/contact`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData)
@@ -524,7 +524,7 @@ export const apiService = {
         }, 800);
       });
     }
-    const res = await fetch(`${API_BASE_URL}/membership`, {
+    const res = await fetch(`${getApiBaseUrl()}/membership`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(memberData)
@@ -543,7 +543,7 @@ export const apiService = {
       }
       return Promise.resolve({ success: true, data: filtered });
     }
-    const res = await fetch(`${API_BASE_URL}/competition-winners?year=${year}&competitionId=${competitionId}`);
+    const res = await fetch(`${getApiBaseUrl()}/competition-winners?year=${year}&competitionId=${competitionId}`);
     return res.json();
   }
 };
