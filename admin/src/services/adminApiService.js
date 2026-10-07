@@ -218,11 +218,7 @@ const INITIAL_GALLERY = [];
 
 const INITIAL_COMMITTEE = [];
 
-const INITIAL_MEMBERSHIPS = [
-  { id: 'm1', fullName: 'Subhajit Roy', email: 'subhajit.roy@example.com', phone: '+91 9871122334', age: 24, occupation: 'Software Developer', address: 'Burul Bazar, South 24 Parganas', status: 'pending', date: '2024-09-01' },
-  { id: 'm2', fullName: 'Priyanka Banerjee', email: 'priyanka.b@example.com', phone: '+91 9832233445', age: 21, occupation: 'College Student', address: 'Main Road, Burul', status: 'approved', date: '2024-08-28' },
-  { id: 'm3', fullName: 'Amitabha Ghosh', email: 'aghosh@example.com', phone: '+91 9743344556', age: 32, occupation: 'Teacher', address: 'Station Road, Burul', status: 'pending', date: '2024-09-03' }
-];
+const INITIAL_MEMBERSHIPS = [];
 
 const INITIAL_MESSAGES = [
   { id: 'msg1', name: 'Debashis Naskar', email: 'debashis@example.com', phone: '+91 9801122334', subject: 'Inquiry regarding Kali Puja Souvenir Booking', message: 'Hello BBSC Committee, I would like to book a full-page color advertisement space in the upcoming Kali Puja 2024 souvenir magazine. Please send rates.', date: '2024-09-02', isRead: false },
@@ -880,12 +876,11 @@ export const adminApiService = {
   getMemberships: () => getStorageItem(STORAGE_KEYS.MEMBERSHIPS, INITIAL_MEMBERSHIPS),
 
   fetchMembershipsFromApi: async () => {
-    let apiItems = [];
     try {
       const res = await fetch(`${getApiBaseUrl()}/membership`);
       if (res.ok) {
         const json = await res.json();
-        apiItems = (json.data || []).map(m => ({
+        const apiItems = (json.data || []).map(m => ({
           id: m._id || m.id,
           _id: m._id || m.id,
           fullName: m.fullName,
@@ -898,27 +893,14 @@ export const adminApiService = {
           status: m.status || 'pending',
           date: m.date || (m.createdAt ? m.createdAt.split('T')[0] : new Date().toISOString().split('T')[0])
         }));
+        setStorageItem(STORAGE_KEYS.MEMBERSHIPS, apiItems);
+        return apiItems;
       }
     } catch (e) {
       console.warn('[Admin API] Could not fetch live memberships from NestJS server', e);
     }
 
-    const localItems = getStorageItem(STORAGE_KEYS.MEMBERSHIPS, INITIAL_MEMBERSHIPS);
-    const mergedMap = new Map();
-
-    localItems.forEach(item => {
-      const key = item.id || item._id || (item.phone + '_' + item.fullName);
-      mergedMap.set(key, item);
-    });
-
-    apiItems.forEach(item => {
-      const key = item.id || item._id || (item.phone + '_' + item.fullName);
-      mergedMap.set(key, item);
-    });
-
-    const mergedList = Array.from(mergedMap.values());
-    setStorageItem(STORAGE_KEYS.MEMBERSHIPS, mergedList);
-    return mergedList;
+    return getStorageItem(STORAGE_KEYS.MEMBERSHIPS, []);
   },
 
   updateMembershipStatus: async (id, status) => {

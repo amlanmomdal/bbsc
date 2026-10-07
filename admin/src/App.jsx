@@ -78,7 +78,7 @@ export function App() {
   const [winners, setWinners] = useState([]);
   const [gallery, setGallery] = useState([]);
   const [committee, setCommittee] = useState([]);
-  const [memberships, setMemberships] = useState([]);
+  const [memberships, setMemberships] = useState(() => adminApiService.getMemberships());
   const [messages, setMessages] = useState([]);
   const [stats, setStats] = useState({});
   const [contactInfo, setContactInfo] = useState({});

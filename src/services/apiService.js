@@ -517,11 +517,7 @@ export const apiService = {
       try {
         const key = 'bbsc_admin_memberships';
         const existingStr = localStorage.getItem(key);
-        const existing = existingStr ? JSON.parse(existingStr) : [
-          { id: 'm1', fullName: 'Subhajit Roy', email: 'subhajit.roy@example.com', phone: '+91 9871122334', age: 24, occupation: 'Software Developer', address: 'Burul Bazar, South 24 Parganas', status: 'pending', date: '2024-09-01' },
-          { id: 'm2', fullName: 'Priyanka Banerjee', email: 'priyanka.b@example.com', phone: '+91 9832233445', age: 21, occupation: 'College Student', address: 'Main Road, Burul', status: 'approved', date: '2024-08-28' },
-          { id: 'm3', fullName: 'Amitabha Ghosh', email: 'aghosh@example.com', phone: '+91 9743344556', age: 32, occupation: 'Teacher', address: 'Station Road, Burul', status: 'pending', date: '2024-09-03' }
-        ];
+        const existing = existingStr ? JSON.parse(existingStr) : [];
 
         const newItem = {
           id: data._id || data.id || ('m_' + Date.now()),
