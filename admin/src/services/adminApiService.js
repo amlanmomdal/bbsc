@@ -880,11 +880,12 @@ export const adminApiService = {
   getMemberships: () => getStorageItem(STORAGE_KEYS.MEMBERSHIPS, INITIAL_MEMBERSHIPS),
 
   fetchMembershipsFromApi: async () => {
+    let apiItems = [];
     try {
       const res = await fetch(`${getApiBaseUrl()}/membership`);
       if (res.ok) {
         const json = await res.json();
-        const items = (json.data || []).map(m => ({
+        apiItems = (json.data || []).map(m => ({
           id: m._id || m.id,
           _id: m._id || m.id,
           fullName: m.fullName,
@@ -897,13 +898,27 @@ export const adminApiService = {
           status: m.status || 'pending',
           date: m.date || (m.createdAt ? m.createdAt.split('T')[0] : new Date().toISOString().split('T')[0])
         }));
-        setStorageItem(STORAGE_KEYS.MEMBERSHIPS, items);
-        return items;
       }
     } catch (e) {
       console.warn('[Admin API] Could not fetch live memberships from NestJS server', e);
     }
-    return getStorageItem(STORAGE_KEYS.MEMBERSHIPS, INITIAL_MEMBERSHIPS);
+
+    const localItems = getStorageItem(STORAGE_KEYS.MEMBERSHIPS, INITIAL_MEMBERSHIPS);
+    const mergedMap = new Map();
+
+    localItems.forEach(item => {
+      const key = item.id || item._id || (item.phone + '_' + item.fullName);
+      mergedMap.set(key, item);
+    });
+
+    apiItems.forEach(item => {
+      const key = item.id || item._id || (item.phone + '_' + item.fullName);
+      mergedMap.set(key, item);
+    });
+
+    const mergedList = Array.from(mergedMap.values());
+    setStorageItem(STORAGE_KEYS.MEMBERSHIPS, mergedList);
+    return mergedList;
   },
 
   updateMembershipStatus: async (id, status) => {
