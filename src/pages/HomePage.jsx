@@ -5,20 +5,41 @@ import {
 } from 'lucide-react';
 import { apiService } from '../services/apiService';
 import { resolveImageUrl } from '../utils/imageUtils';
+import { FestivalSkeletonGrid, CompetitionSkeletonGrid } from '../components/SectionLoader';
 import './HomePage.css';
 
 export default function HomePage({ setActivePage, onOpenJoinModal }) {
   const [festivals, setFestivals] = useState([]);
   const [competitions, setCompetitions] = useState([]);
   const [selectedFestival, setSelectedFestival] = useState(null);
+  const [loadingFestivals, setLoadingFestivals] = useState(true);
+  const [loadingCompetitions, setLoadingCompetitions] = useState(true);
 
   useEffect(() => {
     async function loadHomeData() {
-      const fRes = await apiService.getFestivals();
-      if (fRes.success) setFestivals(fRes.data);
+      setLoadingFestivals(true);
+      setLoadingCompetitions(true);
+      try {
+        const fRes = await apiService.getFestivals();
+        if (fRes && fRes.success && Array.isArray(fRes.data)) {
+          setFestivals(fRes.data);
+        }
+      } catch (err) {
+        console.warn('Error fetching festivals:', err);
+      } finally {
+        setLoadingFestivals(false);
+      }
 
-      const cRes = await apiService.getCompetitions();
-      if (cRes.success) setCompetitions(cRes.data);
+      try {
+        const cRes = await apiService.getCompetitions();
+        if (cRes && cRes.success && Array.isArray(cRes.data)) {
+          setCompetitions(cRes.data);
+        }
+      } catch (err) {
+        console.warn('Error fetching competitions:', err);
+      } finally {
+        setLoadingCompetitions(false);
+      }
     }
     loadHomeData();
   }, []);
@@ -95,30 +116,34 @@ export default function HomePage({ setActivePage, onOpenJoinModal }) {
             <p className="section-subtitle">Uniting People. Celebrating Culture.</p>
           </div>
 
-          <div className="grid-3 festival-grid">
-            {festivals.map((fest) => (
-              <div key={fest.id || fest._id} className="card-dark festival-card">
-                <div className="festival-img-wrap">
-                  <img 
-                    src={resolveImageUrl(fest.image)} 
-                    alt={fest.title} 
-                    onError={(e) => handleImgError(e, '/images/kali_puja.jpg')}
-                  />
-                  <div className="fest-date-tag">{fest.date}</div>
+          {loadingFestivals ? (
+            <FestivalSkeletonGrid count={3} />
+          ) : (
+            <div className="grid-3 festival-grid">
+              {festivals.map((fest) => (
+                <div key={fest.id || fest._id} className="card-dark festival-card">
+                  <div className="festival-img-wrap">
+                    <img 
+                      src={resolveImageUrl(fest.image)} 
+                      alt={fest.title} 
+                      onError={(e) => handleImgError(e, '/images/kali_puja.jpg')}
+                    />
+                    <div className="fest-date-tag">{fest.date}</div>
+                  </div>
+                  <div className="festival-card-body">
+                    <h3 className="fest-card-title">{fest.title}</h3>
+                    <p className="fest-card-sub">{fest.subtitle}</p>
+                    <button 
+                      className="view-details-btn"
+                      onClick={() => setSelectedFestival(fest)}
+                    >
+                      View Details <ChevronRight size={16} />
+                    </button>
+                  </div>
                 </div>
-                <div className="festival-card-body">
-                  <h3 className="fest-card-title">{fest.title}</h3>
-                  <p className="fest-card-sub">{fest.subtitle}</p>
-                  <button 
-                    className="view-details-btn"
-                    onClick={() => setSelectedFestival(fest)}
-                  >
-                    View Details <ChevronRight size={16} />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -130,20 +155,24 @@ export default function HomePage({ setActivePage, onOpenJoinModal }) {
             <p className="section-subtitle">Showcasing Talent, Encouraging Creativity.</p>
           </div>
 
-          <div className="grid-6 competitions-grid">
-            {competitions.map((comp) => (
-              <div 
-                key={comp.id || comp._id} 
-                className="comp-card"
-                onClick={() => setActivePage('competitions')}
-              >
-                <div className="comp-icon-box">
-                  {getIcon(comp.icon)}
+          {loadingCompetitions ? (
+            <CompetitionSkeletonGrid count={6} />
+          ) : (
+            <div className="grid-6 competitions-grid">
+              {competitions.map((comp) => (
+                <div 
+                  key={comp.id || comp._id} 
+                  className="comp-card"
+                  onClick={() => setActivePage('competitions')}
+                >
+                  <div className="comp-icon-box">
+                    {getIcon(comp.icon)}
+                  </div>
+                  <h4 className="comp-title">{comp.title}</h4>
                 </div>
-                <h4 className="comp-title">{comp.title}</h4>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

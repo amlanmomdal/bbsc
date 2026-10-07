@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { apiService } from '../services/apiService';
 import { resolveImageUrl } from '../utils/imageUtils';
+import { CommitteeSkeletonGrid } from '../components/SectionLoader';
 import { Award } from 'lucide-react';
 import './CommitteePage.css';
 
@@ -20,11 +21,21 @@ const RibbonBanner = ({ text }) => {
 
 export default function CommitteePage({ setActivePage, onOpenJoinModal }) {
   const [committee, setCommittee] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadCommittee() {
-      const res = await apiService.getCommittee();
-      if (res.success) setCommittee(res.data);
+      setLoading(true);
+      try {
+        const res = await apiService.getCommittee();
+        if (res && res.success && Array.isArray(res.data)) {
+          setCommittee(res.data);
+        }
+      } catch (err) {
+        console.warn('Error fetching committee members:', err);
+      } finally {
+        setLoading(false);
+      }
     }
     loadCommittee();
   }, []);
@@ -59,33 +70,37 @@ export default function CommitteePage({ setActivePage, onOpenJoinModal }) {
       <section className="section-padding">
         <div className="container">
           {/* Member Cards Grid with Ribbon Banner & Industry Standard Frames */}
-          <div className="committee-grid">
-            {committee.map((member) => {
-              const memberName = member.name || 'Committee Member';
-              const memberRole = member.role || member.position || 'Executive Member';
-              const photoSrc = getMemberPhoto(member);
+          {loading ? (
+            <CommitteeSkeletonGrid count={4} />
+          ) : (
+            <div className="committee-grid">
+              {committee.map((member) => {
+                const memberName = member.name || 'Committee Member';
+                const memberRole = member.role || member.position || 'Executive Member';
+                const photoSrc = getMemberPhoto(member);
 
-              return (
-                <div key={member.id || member._id} className="card-dark member-card">
-                  <div className="member-card-header">
-                    <div className="member-photo-wrap">
-                      <img 
-                        src={photoSrc} 
-                        alt={memberName} 
-                        className="member-photo" 
-                        onError={(e) => handleImgError(e, memberName)}
-                      />
+                return (
+                  <div key={member.id || member._id} className="card-dark member-card">
+                    <div className="member-card-header">
+                      <div className="member-photo-wrap">
+                        <img 
+                          src={photoSrc} 
+                          alt={memberName} 
+                          className="member-photo" 
+                          onError={(e) => handleImgError(e, memberName)}
+                        />
+                      </div>
+                      <RibbonBanner text={memberRole} />
                     </div>
-                    <RibbonBanner text={memberRole} />
-                  </div>
 
-                  <div className="member-info">
-                    <h3 className="member-name">{memberName}</h3>
+                    <div className="member-info">
+                      <h3 className="member-name">{memberName}</h3>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
 
           {/* Join Committee Banner */}
           <div className="committee-join-banner card-dark">

@@ -23,6 +23,9 @@ export class Membership {
   @Prop()
   address: string;
 
+  @Prop({ default: 'General Volunteer' })
+  interest: string;
+
   @Prop({ default: 'pending' })
   status: string; // 'pending' | 'approved' | 'rejected'
 

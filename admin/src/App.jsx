@@ -172,18 +172,24 @@ export function App() {
     return items;
   };
 
+  const handleRefreshMemberships = async () => {
+    const items = await adminApiService.fetchMembershipsFromApi();
+    setMemberships(items);
+    return items;
+  };
+
   const refreshData = async () => {
     setWinners(adminApiService.getWinners());
-    setMemberships(adminApiService.getMemberships());
     setMessages(adminApiService.getMessages());
     setStats(adminApiService.getStats());
     setContactInfo(adminApiService.getContactInfo());
 
-    // Fetch live Cultural Competitions, Events, Gallery & Committee from API
+    // Fetch live Cultural Competitions, Events, Gallery, Committee & Memberships from API
     await handleRefreshCompetitions();
     await handleRefreshEvents();
     await handleRefreshGallery();
     await handleRefreshCommittee();
+    await handleRefreshMemberships();
   };
 
   const handleLoginSuccess = (user) => {
@@ -330,8 +336,8 @@ export function App() {
   };
 
   // Membership Handlers
-  const handleUpdateMembershipStatus = (id, status) => {
-    const updated = adminApiService.updateMembershipStatus(id, status);
+  const handleUpdateMembershipStatus = async (id, status) => {
+    const updated = await adminApiService.updateMembershipStatus(id, status);
     setMemberships(updated);
     Swal.fire({ title: 'Status Updated!', text: `Membership application marked as ${status}.`, icon: 'success', timer: 1800, showConfirmButton: false });
   };
@@ -347,7 +353,7 @@ export function App() {
       confirmButtonText: 'Yes, delete it!'
     });
     if (res.isConfirmed) {
-      const updated = adminApiService.deleteMembership(id);
+      const updated = await adminApiService.deleteMembership(id);
       setMemberships(updated);
       Swal.fire({ title: 'Deleted!', text: 'Application deleted.', icon: 'success', timer: 1800, showConfirmButton: false });
     }
@@ -488,6 +494,7 @@ export function App() {
               memberships={memberships}
               onUpdateStatus={handleUpdateMembershipStatus}
               onDeleteMembership={handleDeleteMembership}
+              onRefresh={handleRefreshMemberships}
             />
           )}
 

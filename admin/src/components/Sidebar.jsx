@@ -21,7 +21,7 @@ export const Sidebar = ({ activeTab, setActiveTab, unreadMessagesCount, pendingM
     { id: 'winners', label: 'Competition Winners', icon: Trophy },
     { id: 'gallery', label: 'Gallery Photos', icon: ImageIcon },
     { id: 'committee', label: 'Committee Roster', icon: Users },
-    { id: 'memberships', label: 'Memberships', icon: UserCheck, count: pendingMembershipsCount },
+    { id: 'memberships', label: 'Become Member Request', icon: UserCheck, count: pendingMembershipsCount },
     { id: 'messages', label: 'Visitor Messages', icon: Mail, count: unreadMessagesCount },
     { id: 'settings', label: 'Club Settings', icon: Settings },
   ];

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { apiService } from '../services/apiService';
 import { resolveImageUrl } from '../utils/imageUtils';
+import { CompetitionSkeletonGrid } from '../components/SectionLoader';
 import { 
   Palette, Sparkles, Music, BookOpen, Flower2, Smile, Gamepad2, 
   HelpCircle, Camera, FileText, Trophy, UserCheck, Calendar, Award, ChevronRight, Lock
@@ -9,11 +10,21 @@ import './CompetitionsPage.css';
 
 export default function CompetitionsPage({ setActivePage, onOpenJoinModal, onViewPastWinners }) {
   const [competitions, setCompetitions] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadComps() {
-      const res = await apiService.getCompetitions();
-      if (res.success) setCompetitions(res.data);
+      setLoading(true);
+      try {
+        const res = await apiService.getCompetitions();
+        if (res && res.success && Array.isArray(res.data)) {
+          setCompetitions(res.data);
+        }
+      } catch (err) {
+        console.warn('Error fetching competitions:', err);
+      } finally {
+        setLoading(false);
+      }
     }
     loadComps();
   }, []);
@@ -61,49 +72,53 @@ export default function CompetitionsPage({ setActivePage, onOpenJoinModal, onVie
             <p className="section-subtitle">Explore categories & view past champions of Burul Blue Star Club</p>
           </div>
 
-          <div className="grid-2 comp-detail-grid">
-            {competitions.map((comp) => (
-              <div key={comp.id} className="card-dark comp-detail-card">
-                <div>
-                  <div className="comp-card-header">
-                    <div className="comp-badge-icon">{getIcon(comp.icon)}</div>
-                    <div>
-                      <span className="comp-category-tag">{comp.category}</span>
-                      <h3 className="comp-detail-title">{comp.title}</h3>
+          {loading ? (
+            <CompetitionSkeletonGrid count={6} />
+          ) : (
+            <div className="grid-2 comp-detail-grid">
+              {competitions.map((comp) => (
+                <div key={comp.id || comp._id} className="card-dark comp-detail-card">
+                  <div>
+                    <div className="comp-card-header">
+                      <div className="comp-badge-icon">{getIcon(comp.icon)}</div>
+                      <div>
+                        <span className="comp-category-tag">{comp.category || 'Competitions'}</span>
+                        <h3 className="comp-detail-title">{comp.title}</h3>
+                      </div>
+                    </div>
+
+                    <div className="comp-detail-meta">
+                      <div><UserCheck size={16} color="#EBB328" /> <strong>Eligibility:</strong> {comp.ageGroup || 'Open Category'}</div>
+                      <div><Trophy size={16} color="#EBB328" /> <strong>Awards:</strong> Trophies, Certificates</div>
+                      <div><Calendar size={16} color="#EBB328" /> <strong>Venue:</strong> Burul Blue Star Club Stage</div>
                     </div>
                   </div>
 
-                  <div className="comp-detail-meta">
-                    <div><UserCheck size={16} color="#EBB328" /> <strong>Eligibility:</strong> {comp.ageGroup}</div>
-                    <div><Trophy size={16} color="#EBB328" /> <strong>Awards:</strong> Trophies, Certificates</div>
-                    <div><Calendar size={16} color="#EBB328" /> <strong>Venue:</strong> Burul Blue Star Club Stage</div>
+                  <div className="comp-card-actions">
+                    <button 
+                      className="btn-gold comp-card-btn btn-disabled-lock"
+                      disabled
+                      title="Registration is currently disabled"
+                    >
+                      <Lock size={16} /> Register Participant
+                    </button>
+                    <button 
+                      className="btn-outline-gold comp-card-btn"
+                      onClick={() => {
+                        if (onViewPastWinners) {
+                          onViewPastWinners(comp.title);
+                        } else {
+                          setActivePage('winners');
+                        }
+                      }}
+                    >
+                      <Trophy size={16} /> Past Winners
+                    </button>
                   </div>
                 </div>
-
-                <div className="comp-card-actions">
-                  <button 
-                    className="btn-gold comp-card-btn btn-disabled-lock"
-                    disabled
-                    title="Registration is currently disabled"
-                  >
-                    <Lock size={16} /> Register Participant
-                  </button>
-                  <button 
-                    className="btn-outline-gold comp-card-btn"
-                    onClick={() => {
-                      if (onViewPastWinners) {
-                        onViewPastWinners(comp.title);
-                      } else {
-                        setActivePage('winners');
-                      }
-                    }}
-                  >
-                    <Trophy size={16} /> Past Winners
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

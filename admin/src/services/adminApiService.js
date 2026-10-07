@@ -876,17 +876,77 @@ export const adminApiService = {
     return adminApiService.deleteCommitteeMemberMaster(id);
   },
 
-  // Memberships API
+  // Memberships API (Dynamic Become a Member Request Integration)
   getMemberships: () => getStorageItem(STORAGE_KEYS.MEMBERSHIPS, INITIAL_MEMBERSHIPS),
-  updateMembershipStatus: (id, status) => {
+
+  fetchMembershipsFromApi: async () => {
+    try {
+      const res = await fetch(`${getApiBaseUrl()}/membership`);
+      if (res.ok) {
+        const json = await res.json();
+        const items = (json.data || []).map(m => ({
+          id: m._id || m.id,
+          _id: m._id || m.id,
+          fullName: m.fullName,
+          email: m.email || '',
+          phone: m.phone || '',
+          address: m.address || 'Burul',
+          interest: m.interest || 'General Volunteer',
+          age: m.age || null,
+          occupation: m.occupation || '',
+          status: m.status || 'pending',
+          date: m.date || (m.createdAt ? m.createdAt.split('T')[0] : new Date().toISOString().split('T')[0])
+        }));
+        setStorageItem(STORAGE_KEYS.MEMBERSHIPS, items);
+        return items;
+      }
+    } catch (e) {
+      console.warn('[Admin API] Could not fetch live memberships from NestJS server', e);
+    }
+    return getStorageItem(STORAGE_KEYS.MEMBERSHIPS, INITIAL_MEMBERSHIPS);
+  },
+
+  updateMembershipStatus: async (id, status) => {
+    try {
+      if (id) {
+        const headers = await getAuthHeaders();
+        const res = await fetch(`${getApiBaseUrl()}/membership/${id}/status`, {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify({ status })
+        });
+        if (res.ok) {
+          return await adminApiService.fetchMembershipsFromApi();
+        }
+      }
+    } catch (e) {
+      console.warn('[Admin API] Server offline, updating membership status locally', e);
+    }
+
     const memberships = getStorageItem(STORAGE_KEYS.MEMBERSHIPS, INITIAL_MEMBERSHIPS);
-    const updated = memberships.map(m => m.id === id ? { ...m, status } : m);
+    const updated = memberships.map(m => (m.id === id || m._id === id) ? { ...m, status } : m);
     setStorageItem(STORAGE_KEYS.MEMBERSHIPS, updated);
     return updated;
   },
-  deleteMembership: (id) => {
+
+  deleteMembership: async (id) => {
+    try {
+      if (id) {
+        const headers = await getAuthHeaders();
+        const res = await fetch(`${getApiBaseUrl()}/membership/${id}`, {
+          method: 'DELETE',
+          headers
+        });
+        if (res.ok) {
+          return await adminApiService.fetchMembershipsFromApi();
+        }
+      }
+    } catch (e) {
+      console.warn('[Admin API] Server offline, deleting membership locally', e);
+    }
+
     const memberships = getStorageItem(STORAGE_KEYS.MEMBERSHIPS, INITIAL_MEMBERSHIPS);
-    const updated = memberships.filter(m => m.id !== id);
+    const updated = memberships.filter(m => m.id !== id && m._id !== id);
     setStorageItem(STORAGE_KEYS.MEMBERSHIPS, updated);
     return updated;
   },

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { apiService } from '../services/apiService';
+import { WinnersSkeletonGrid } from '../components/SectionLoader';
 import { 
   Trophy, Award, Search, Filter, Calendar, Sparkles, ChevronRight, UserCheck, Star, ShieldCheck
 } from 'lucide-react';
@@ -8,6 +9,7 @@ import './WinnersPage.css';
 export default function WinnersPage({ setActivePage, selectedCompFilter = 'All' }) {
   const [competitions, setCompetitions] = useState([]);
   const [winners, setWinners] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [activeYear, setActiveYear] = useState('All');
   const [activeCompFilter, setActiveCompFilter] = useState(selectedCompFilter);
   const [searchTerm, setSearchTerm] = useState('');
@@ -18,11 +20,22 @@ export default function WinnersPage({ setActivePage, selectedCompFilter = 'All' 
 
   useEffect(() => {
     async function loadData() {
-      const cRes = await apiService.getCompetitions();
-      if (cRes.success) setCompetitions(cRes.data);
+      setLoading(true);
+      try {
+        const cRes = await apiService.getCompetitions();
+        if (cRes && cRes.success && Array.isArray(cRes.data)) {
+          setCompetitions(cRes.data);
+        }
 
-      const wRes = await apiService.getCompetitionWinners('All', 'All');
-      if (wRes.success) setWinners(wRes.data);
+        const wRes = await apiService.getCompetitionWinners('All', 'All');
+        if (wRes && wRes.success && Array.isArray(wRes.data)) {
+          setWinners(wRes.data);
+        }
+      } catch (err) {
+        console.warn('Error fetching winners data:', err);
+      } finally {
+        setLoading(false);
+      }
     }
     loadData();
   }, []);
@@ -85,7 +98,7 @@ export default function WinnersPage({ setActivePage, selectedCompFilter = 'All' 
               >
                 <option value="All">🏆 All Competitions</option>
                 {competitions.map(c => (
-                  <option key={c.id} value={c.title}>{c.title}</option>
+                  <option key={c.id || c._id} value={c.title}>{c.title}</option>
                 ))}
               </select>
             </div>
@@ -128,7 +141,10 @@ export default function WinnersPage({ setActivePage, selectedCompFilter = 'All' 
           )}
 
           {/* Year Wise Winners Breakdown */}
-          {yearsToDisplay.map(year => {
+          {loading ? (
+            <WinnersSkeletonGrid count={3} />
+          ) : (
+            yearsToDisplay.map(year => {
             const yearWinners = filteredWinners.filter(w => w.year === year);
             if (yearWinners.length === 0) return null;
 
@@ -238,9 +254,9 @@ export default function WinnersPage({ setActivePage, selectedCompFilter = 'All' 
                 })}
               </div>
             );
-          })}
+          }))}
 
-          {filteredWinners.length === 0 && (
+          {!loading && filteredWinners.length === 0 && (
             <div className="empty-results-box card-dark">
               <Trophy size={54} color="#EBB328" />
               <h3>No Winner Records Found</h3>

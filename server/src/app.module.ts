@@ -8,6 +8,7 @@ import { CompetitionsModule } from './competitions/competitions.module';
 import { EventsModule } from './events/events.module';
 import { GalleryModule } from './gallery/gallery.module';
 import { CommitteeModule } from './committee/committee.module';
+import { MembershipModule } from './membership/membership.module';
 import { DocsModule } from './docs/docs.module';
 import { DatabaseModule } from './database/database.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
@@ -27,6 +28,7 @@ const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://bbsc_admin:66jsAHzD9S
     EventsModule,
     GalleryModule,
     CommitteeModule,
+    MembershipModule,
     DocsModule,
   ],
   controllers: [AppController],
